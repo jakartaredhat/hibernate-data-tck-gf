@@ -83,7 +83,11 @@
             <artifactId>hibernate-core</artifactId>
             <version>${hibernate.data.version}</version>
         </dependency>
-
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <version>${h2.version}</version>
+        </dependency>
 
         <dependency>
             <groupId>org.jboss.weld</groupId>
@@ -126,12 +130,6 @@
             <artifactId>arquillian-protocol-rest-jakarta</artifactId>
             <version>${arquillian.version}</version>
         </dependency>
-        <dependency>
-            <groupId>org.apache.derby</groupId>
-            <artifactId>derbyclient</artifactId>
-            <version>10.16.1.1</version>
-            <scope>test</scope>
-        </dependency>
     </dependencies>
 
     <build>
@@ -144,6 +142,7 @@
                     <release>17</release>
                 </configuration>
             </plugin>
+            <!-- Copy hibernate ORM and H2 dependencies into GF domain lib dir -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-dependency-plugin</artifactId>
@@ -158,8 +157,8 @@
                     </execution>
                 </executions>
                 <configuration>
-                    <includeGroupIds>org.hibernate,org.glassfish,io.smallrye,net.bytebuddy,org.antlr</includeGroupIds>
-                    <includeArtifactIds>hibernate-core,hibernate-commons-annotations,data-osgi-bundle,jandex,byte-buddy,antlr4-runtime</includeArtifactIds>
+                    <includeGroupIds>org.hibernate,org.glassfish,io.smallrye,net.bytebuddy,org.antlr,com.h2database</includeGroupIds>
+                    <includeArtifactIds>hibernate-core,hibernate-commons-annotations,data-osgi-bundle,jandex,byte-buddy,antlr4-runtime,h2</includeArtifactIds>
                     <outputDirectory>${glassfish.home}/glassfish/domains/domain1/lib/</outputDirectory>
                     <overWriteReleases>false</overWriteReleases>
                     <overWriteSnapshots>false</overWriteSnapshots>
@@ -191,7 +190,6 @@
                         <arquillian.launch>glassfish</arquillian.launch>
                         <jakarta.tck.skip.deployment>false</jakarta.tck.skip.deployment>
                         <!--glassfish.postBootCommands>
-                            add-library - -type app /Users/starksm/Dev/Jakarta/hibernate-data-tck-gf/runner-web/target/hibernate-core.jar
                         </glassfish.postBootCommands-->
                     </systemPropertyVariables>
                     <environmentVariables>
@@ -229,6 +227,43 @@
                                         <echo message="Installing GlassFish"/>
                                         <!-- Using an ant task to deflate webinstaller.zip -->
                                         <unzip src="${glassfish.web.bundle}" dest="${basedir}/target"/>
+                                        <!-- -->
+                                        <echo message="GlassFish installed"/>
+                                        <echo message="Starting GlassFish"/>
+                                        <exec executable="/bin/bash">
+                                            <arg value="${basedir}/target/glassfish7/bin/asadmin"/>
+                                            <arg value="start-domain"/>
+                                        </exec>
+                                        <echo message="Configuring H2Pool JDBC Pool"/>
+                                        <exec executable="/bin/bash">
+                                            <arg value="${basedir}/target/glassfish7/bin/asadmin"/>
+                                            <arg value="create-jdbc-connection-pool"/>
+                                            <arg value="--datasourceclassname"/>
+                                            <arg value="org.h2.jdbcx.JdbcDataSource"/>
+                                            <arg value="--property"/>
+                                            <arg value="url=jdbc\:h2\:/tmp/h2temp"/>
+                                            <arg value="H2Pool"/>
+                                        </exec>
+                                        <echo message="Configuring H2Pool JNDI Binding"/>
+                                        <exec executable="/bin/bash">
+                                            <arg value="${basedir}/target/glassfish7/bin/asadmin"/>
+                                            <arg value="create-jdbc-resource"/>
+                                            <arg value="--connectionpoolid"/>
+                                            <arg value="H2Pool"/>
+                                            <arg value="jdbc/DataTCK"/>
+                                        </exec>
+                                        <echo message="Listing JDBC Pools"/>
+                                        <exec executable="/bin/bash">
+                                            <arg value="${basedir}/target/glassfish7/bin/asadmin"/>
+                                            <arg value="list"/>
+                                            <arg value="resources.jdbc-connection-pool.*"/>
+                                        </exec>
+
+                                        <echo message="Stopping GlassFish"/>
+                                        <exec executable="/bin/bash">
+                                            <arg value="${basedir}/target/glassfish7/bin/asadmin"/>
+                                            <arg value="stop-domain"/>
+                                        </exec>
                                     </target>
                                 </configuration>
                             </execution>

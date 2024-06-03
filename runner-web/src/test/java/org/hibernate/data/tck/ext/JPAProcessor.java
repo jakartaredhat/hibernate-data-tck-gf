@@ -26,20 +26,14 @@ public class JPAProcessor implements ApplicationArchiveProcessor {
                 <persistence-unit name="jakarta-data-tck">
                     <description>Hibernate Entity Manager for Jakarta Data TCK</description>
                     <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
-                        
-                    <properties>
-                   
-                        <property name="jakarta.persistence.jdbc.url"
-                                  value="jdbc:derby://localhost:1527/datatck;create=true" />
-                        <property name="jakarta.persistence.jdbc.user" value="admin" />
-                        <property name="jakarta.persistence.jdbc.password" value="()" />
-                        
+                    <jta-data-source>jdbc/DataTCK</jta-data-source>
+
+                    <properties>                       
                         <property name="jakarta.persistence.schema-generation.database.action"
                                   value="drop-and-create"/>
                         
                         <property name="hibernate.allow_update_outside_transaction" value="true"/>
-                        <!--property name="hibernate.connection.autocommit" value="true"/-->
-                        <property name="hibernate.dialect" value="org.hibernate.dialect.DerbyDialect"/>
+                        <property name="hibernate.dialect" value="org.hibernate.dialect.H2Dialect"/>
                         <property name="hibernate.show_sql"   value="true" />
                         <property name="hibernate.format_sql" value="true" />
                         <property name="hibernate.highlight_sql" value="false" />
