@@ -10,7 +10,7 @@
 
     <container qualifier="glassfish" default="true">
         <configuration>
-            <property name="glassFishHome">target/glassfish7</property>
+            <property name="glassFishHome">target/glassfish8</property>
             <property name="adminHost">localhost</property>
             <property name="adminPort">4848</property>
             <property name="enableDerby">${enableDerby:true}</property>

@@ -36,9 +36,9 @@
         <weld.version>5.1.2.Final</weld.version>
         <weld-junit.version>4.0.2.Final</weld-junit.version>
         <h2.version>2.1.214</h2.version>
-        <glassfish.web.bundle>${project.build.directory}/web-7.0.14.zip</glassfish.web.bundle>
+        <glassfish.web.bundle>${project.build.directory}/glassfish-8.0.0-JDK17-M6.zip</glassfish.web.bundle>
         <glassfish.arquillian.version>1.4</glassfish.arquillian.version>
-        <glassfish.home>${project.build.directory}/glassfish7</glassfish.home>
+        <glassfish.home>${project.build.directory}/glassfish8</glassfish.home>
     </properties>
 
     <!-- The Junit5 test frameworks -->
@@ -182,7 +182,7 @@
                     <systemPropertyVariables>
                         <jimage.dir>target/jimage</jimage.dir>
                         <jakarta.tck.profile>core</jakarta.tck.profile>
-                        <signature.sigTestClasspath>${project.build.directory}/glassfish7/glassfish/domains/domain1/lib/data-osgi-bundle-1.0.0.jar</signature.sigTestClasspath>
+                        <signature.sigTestClasspath>${project.build.directory}/glassfish8/glassfish/domains/domain1/lib/data-osgi-bundle-1.0.0.jar</signature.sigTestClasspath>
                         <java.util.logging.config.file>target/test-classes/logging.properties</java.util.logging.config.file>
                         <maven.repo.local>${settings.localRepository}</maven.repo.local>
                         <glassfish.home>${glassfish.home}</glassfish.home>
@@ -220,7 +220,7 @@
                                 <configuration>
                                     <target>
                                         <echo message="Downloading GlassFish" />
-                                        <get src="https://eclipse.mirror.rafal.ca/ee4j/glassfish/web-7.0.14.zip"
+                                        <get src="https://github.com/eclipse-ee4j/glassfish/releases/download/8.0.0-M6/glassfish-8.0.0-JDK17-M6.zip"
                                              dest="${project.build.directory}"
                                              verbose="false"
                                              usetimestamp="true"/>
@@ -231,12 +231,12 @@
                                         <echo message="GlassFish installed"/>
                                         <echo message="Starting GlassFish"/>
                                         <exec executable="/bin/bash">
-                                            <arg value="${basedir}/target/glassfish7/bin/asadmin"/>
+                                            <arg value="${basedir}/target/glassfish8/bin/asadmin"/>
                                             <arg value="start-domain"/>
                                         </exec>
                                         <echo message="Configuring H2Pool JDBC Pool"/>
                                         <exec executable="/bin/bash">
-                                            <arg value="${basedir}/target/glassfish7/bin/asadmin"/>
+                                            <arg value="${basedir}/target/glassfish8/bin/asadmin"/>
                                             <arg value="create-jdbc-connection-pool"/>
                                             <arg value="--datasourceclassname"/>
                                             <arg value="org.h2.jdbcx.JdbcDataSource"/>
@@ -246,7 +246,7 @@
                                         </exec>
                                         <echo message="Configuring H2Pool JNDI Binding"/>
                                         <exec executable="/bin/bash">
-                                            <arg value="${basedir}/target/glassfish7/bin/asadmin"/>
+                                            <arg value="${basedir}/target/glassfish8/bin/asadmin"/>
                                             <arg value="create-jdbc-resource"/>
                                             <arg value="--connectionpoolid"/>
                                             <arg value="H2Pool"/>
@@ -254,14 +254,14 @@
                                         </exec>
                                         <echo message="Listing JDBC Pools"/>
                                         <exec executable="/bin/bash">
-                                            <arg value="${basedir}/target/glassfish7/bin/asadmin"/>
+                                            <arg value="${basedir}/target/glassfish8/bin/asadmin"/>
                                             <arg value="list"/>
                                             <arg value="resources.jdbc-connection-pool.*"/>
                                         </exec>
 
                                         <echo message="Stopping GlassFish"/>
                                         <exec executable="/bin/bash">
-                                            <arg value="${basedir}/target/glassfish7/bin/asadmin"/>
+                                            <arg value="${basedir}/target/glassfish8/bin/asadmin"/>
                                             <arg value="stop-domain"/>
                                         </exec>
                                     </target>
